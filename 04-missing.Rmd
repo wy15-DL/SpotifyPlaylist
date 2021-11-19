@@ -1,10 +1,4 @@
 
----
-title: "04-missing"
-output: html_document
-date: "`r Sys.Date()`"
-site: bookdown::bookdown_site
----
 # Missing values
 
 The original spotify million playlist data has 1000 json files each contains 1000 playlists. After plotting missing values for several files, we dicover that only the "description" field in "playlists" has missing values and about 98% playlists do not have descriptions. Considering the majority of playlists do not have this field, we decided to exlude it from our analysis. Below are plots of missing values in the first json file, which demonstrates our point. The first plot is for tracks and the second is for playlist basic information.
