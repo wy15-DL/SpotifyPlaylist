@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "Exploratory Data Analysis of Spotify Playlists"
+author: "Benjamin Zimnick & Yuan Wang"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
