@@ -1,1 +1,30 @@
+
+---
+title: "04-missing"
+output: html_document
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+---
 # Missing values
+
+The original spotify million playlist data has 1000 json files each contains 1000 playlists. After plotting missing values for several files, we dicover that only the "description" field in "playlists" has missing values and about 98% playlists do not have descriptions. Considering the majority of playlists do not have this field, we decided to exlude it from our analysis. Below are plots of missing values in the first json file, which demonstrates our point. The first plot is for tracks and the second is for playlist basic information.
+
+```{r, warning=FALSE}
+source("plot_missing.R")
+library(tidyverse)
+library(jsonlite)
+pl1.JSON <- fromJSON("./data/mpd.slice.0-999.json", flatten = TRUE)
+
+playlist_info <- pl1.JSON[["playlists"]] %>% select(-tracks)
+tracks <- pl1.JSON[["playlists"]][["tracks"]]
+track_merge <- do.call("rbind", tracks)
+
+# shorten names for the plot
+names(track_merge) <- c("pos", "artist", "tr_uri", "art_uri", "t_name", "ab_url", "ms", "ab_name")
+names(playlist_info) <- c("name", "collab", "pid", "mod_at", "n_tr", "n_ab", "n_fo", "n_ed", "ms", "n_art", "descrp")
+
+plot_missing(track_merge, TRUE)
+plot_missing(playlist_info, TRUE)
+```
+
+
