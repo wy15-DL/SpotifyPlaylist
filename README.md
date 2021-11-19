@@ -1,5 +1,7 @@
 This is a template for the EDAV final project. It is based on the template created with *File, New Project..., New Directory, Book Project using bookdown* in RStudio. 
-
+The goal of this project is to analyze popularities of playlists on Spotify. We select popular playlists from the
+Spotify Million Playlists downloaded from https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge/dataset_files, and do exploratory
+data analysis on them from aspects of their contents, choices of combinations, purposes and targeted audiences, etc. The "spotifyr" package is used to query information about contents of playlists from Spotify's Web API. 
 
 ## ABSOLUTE ESSENTIALS
 
