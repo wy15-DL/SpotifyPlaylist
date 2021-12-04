@@ -1,11 +1,11 @@
 # Results
 
-# Investigate contents of popular playlists.
+## Investigate contents of popular playlists.
 ```{r}
 artists <- all_tracks %>% distinct(artist_name, artist_uri)
 tracks <- all_tracks %>% distinct(track_name, track_uri)
 ```
-## Artists
+### Artists
 ```{r}
 top_30_artists <- all_tracks %>% group_by(artist_name) %>% 
   summarise(n = n()) %>% 
@@ -37,7 +37,7 @@ all_tracks %>% group_by(artist_name) %>%
                  binwidth = 25, boundary=0) 
 ```
  
-# Tracks
+### Tracks
 ```{r, warning=FALSE}
 track_uri_name <- distinct(all_tracks, track_uri, track_name)
 
