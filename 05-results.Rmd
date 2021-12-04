@@ -7,7 +7,7 @@ tracks <- all_tracks %>% distinct(track_name, track_uri)
 ```
 ## Artists
 ```{r}
-top_30_artists <- all_tracks2 %>% group_by(artist_name) %>% 
+top_30_artists <- all_tracks %>% group_by(artist_name) %>% 
   summarise(n = n()) %>% 
   top_n(30, n) %>%
   arrange(desc(n)) 
@@ -38,7 +38,7 @@ all_tracks %>% group_by(artist_name) %>%
 ```
  
 # Tracks
-```{r, warning=false}
+```{r, warning=FALSE}
 track_uri_name <- distinct(all_tracks, track_uri, track_name)
 
 df2 <- all_tracks %>% group_by(track_name) %>% mutate(count=n(), track_artist = paste(track_name, artist_name, sep=" - "))

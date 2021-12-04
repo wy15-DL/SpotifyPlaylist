@@ -63,17 +63,16 @@ popular_pl_500 <- popular_pl %>% filter(num_followers >= 500)
 
 To analyze the tracks in each playlist, we try to unpack the field "tracks" in each observation. First, we plot the number of tracks in these playlists.
 ```{r, warning=FALSE}
-popular_pl %>% select(-tracks) %>% 
+popular_pl_500 %>% select(-tracks) %>% 
   filter(if_any(everything(), ~ !is.na(.x)))%>% 
   mutate(mean_num_track = mean(num_tracks)) %>% 
-  ggplot(aes(x = "all 1303 playlists", num_tracks)) + 
+  ggplot(aes(x = "all 284 playlists with #followers >= 500", num_tracks)) + 
   geom_boxplot()+
   stat_summary(geom = "errorbar", fun.min = mean, fun = mean, fun.max = mean, width = .75, linetype = "dashed")+
   ggtitle("Number of Tracks in Playlists")
 ```
-As the box plot of the number of tracks shows that the number of tracks of most playlists are between 25 and 125 and the dash line show the mean value of around 85. Therefore, if we use all 1303 playlists of having more than 50 followers, the dataset of their tracks will be of size around (85 * 1303) = 110755. We merge the tracks of all playlists into all_tracks. This will be used mainly to investigate contents of playlists, not choices of combinations.
+As the box plot of the number of tracks shows that the middle 50% of the number of tracks  are between 25 and 125 and the dash line show the mean value of around 85. Therefore, if we use all 1303 playlists of having more than 50 followers, the dataset of their tracks will be of size around (88 * 284) = 24140. We merge the tracks of all playlists into all_tracks for analysis on the contents of these popular playlists. 
 
 ```{r, warning=FALSE}
-all_tracks <-do.call("rbind", popular_pl$tracks) 
 all_tracks <-do.call("rbind", popular_pl_500$tracks) 
 ```
