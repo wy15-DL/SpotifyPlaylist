@@ -39,19 +39,27 @@ all_tracks %>% group_by(artist_name) %>%
  
 ### Tracks
 ```{r, warning=FALSE}
-track_uri_name <- distinct(all_tracks, track_uri, track_name)
+track_uri_name <- distinct(all_tracks, track_uri, track_name, artist_name)
 
-df2 <- all_tracks %>% group_by(track_name) %>% mutate(count=n(), track_artist = paste(track_name, artist_name, sep=" - "))
+df2 <- all_tracks %>% group_by(track_name) %>% mutate(count=n(), track_artist = paste(track_name, artist_name, sep=" @ "))
+
   
-top_30_tracks <- df2 %>% group_by(track_artist) %>% 
+top_30_tracks <- all_tracks %>% group_by(track_uri) %>% 
   summarise(count = n()) %>% 
   arrange(desc(count)) %>%
   top_n(30) 
-top_30_tracks %>%
-  ggplot(aes(x = count, y = fct_reorder(track_artist, count))) +
-  geom_point() + 
+
+
+top_30_tracks[c('track', 'artist')] <- track_uri_name[match(top_30_tracks$track_uri, track_uri_name$track_uri), c('track_name', 'artist_name')]
+#track_uri_name %>% filter(track_uri %in% top_30_tracks$track_uri) %>% select(track_name, artist_name)
+
+tr_30 <- top_30_tracks
+tr_30$track[startsWith(tr_30$track, "CAN'T STOP THE FEELING")] <-  "CAN'T STOP THE FEELING!"
+tr_30 %>%
+  ggplot(aes(x = count, y = fct_reorder(as.factor(track), count), fill=count)) +
+  geom_bar(stat = "identity") + 
   xlab("Number of Tracks") +
-  ylab("Track Name from Artist")
+  ylab("Track Name") 
   
 
 ```
