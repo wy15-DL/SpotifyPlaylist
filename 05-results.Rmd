@@ -7,12 +7,11 @@ tracks <- all_tracks %>% distinct(track_name, track_uri)
 ```
 ## Artists
 ```{r}
-top_30_artists <- all_tracks %>% group_by(artist_name) %>% 
+top_30_artists <- all_tracks2 %>% group_by(artist_name) %>% 
   summarise(n = n()) %>% 
   top_n(30, n) %>%
   arrange(desc(n)) 
 
-top_30_artists$artist_uri <- all_tracks %>% filter
 
 top_30_artists %>%
   ggplot(aes(x = n, y = fct_reorder(artist_name, n))) +

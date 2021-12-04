@@ -2,7 +2,7 @@
 ```{r}
 
 load("data/PPLs50.RData")
-load("data/PPLs_has_fls.RData")
+#load("data/PPLs_has_fls.RData")
 ```
 
 Load the data source of playlists which has more than 1 follower and plot their number of followers to help us to set a threshold for selecting popular playlists.
@@ -57,7 +57,7 @@ num_fl_p4 <- popular_pl %>% filter(num_followers < 1250) %>% select(-tracks) %>%
 ```
 From the four box plots with different upper bounds on the number of followers, we can see that the approximate fourth quarter of the number of followers starts at 250 and contains data with number of followers bigger than 500. Therefore, we define popular playlists as the ones having more than 500 followers.
 ```{r}
-pop_pl_500 <- popular_pl %>% filter(num_followers >= 500)
+popular_pl_500 <- popular_pl %>% filter(num_followers >= 500)
 ```
 
 
@@ -75,5 +75,5 @@ As the box plot of the number of tracks shows that the number of tracks of most 
 
 ```{r}
 all_tracks <-do.call("rbind", popular_pl$tracks) 
-all_tracks <-do.call("rbind", popular_pl_125$tracks) 
+all_tracks <-do.call("rbind", popular_pl_500$tracks) 
 ```
