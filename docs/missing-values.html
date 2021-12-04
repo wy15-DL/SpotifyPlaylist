@@ -109,9 +109,9 @@
 <div id="missing-values" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Missing values</h1>
 <p>The original spotify million playlist data has 1000 json files each contains 1000 playlists. After plotting missing values for several files, we dicover that only the “description” field in “playlists” has missing values and about 98% playlists do not have descriptions. Considering the majority of playlists do not have this field, we decided to exlude it from our analysis. Below are plots of missing values in the first json file, which demonstrates our point. The first plot is for tracks and the second is for playlist basic information.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-71-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-71-2.png" width="672" />
+<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-13-2.png" width="672" />
 After extracting the popular playlists with more than 50 followers, we plot its missing values:
-<img src="finalproj_files/figure-html/unnamed-chunk-72-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-72-2.png" width="672" /></p>
+<img src="finalproj_files/figure-html/unnamed-chunk-14-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
 <p>It show that about 93% of the observations does not have description. Considering the description field is not important for our exploratory analysis and assuming that the listeners might not pay attention to it when deciding whether they like listening to the playlist, we remove this field from our analysis.</p>
 
 </div>

@@ -59,7 +59,7 @@ tr_30 %>%
   ggplot(aes(x = count, y = fct_reorder(as.factor(track), count), fill=count)) +
   geom_bar(stat = "identity") + 
   xlab("Number of Tracks") +
-  ylab("Track Name") 
-  
+  ylab("Track Name") +
+  scale_fill_continuous(low = "yellow", high = "red") 
 
 ```
