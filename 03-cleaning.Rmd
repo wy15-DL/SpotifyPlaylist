@@ -1,1 +1,79 @@
 # Data transformation
+```{r}
+
+load("data/PPLs50.RData")
+load("data/PPLs_has_fls.RData")
+```
+
+Load the data source of playlists which has more than 1 follower and plot their number of followers to help us to set a threshold for selecting popular playlists.
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+p1 <- popular_pl %>% select(-tracks) %>% 
+  filter(if_any(everything(), ~ !is.na(.x)))%>% 
+  mutate(mean_num_track = mean(num_tracks)) %>% 
+  ggplot(aes(x = "all playlists with more than 50 followers", num_followers)) + 
+  geom_boxplot(alpha = 0.6, outlier.shape = 4, outlier.size = 3)+
+  stat_summary(geom = "errorbar", fun.min = mean, fun = mean, fun.max = mean, width = .75, linetype = "dashed")+
+  ggtitle("Number of Tracks in Playlists")
+
+```
+The box plot above shows that there are few outliers that have more than 10000 followers, which results in a big range in y-axis and it's difficult to determine the 75-quantile. Since only a few out of 1303 observations are such outliers, we can plot the number of followers for playlists with less than 10000 followers and use its value of 75-quantile as an approximation.
+```{r}
+library(cowplot)
+num_fl_p1 <- popular_pl %>% filter(num_followers < 10000) %>% select(-tracks) %>% 
+  filter(if_any(everything(), ~ !is.na(.x)))%>% 
+  mutate(mean_num_track = mean(num_tracks)) %>% 
+  ggplot(aes(x = "all playlists with more than 50 and less than 10000 followers", num_followers)) + 
+  geom_boxplot(alpha = 0.6, outlier.shape = 4, outlier.size = 3)+
+  stat_summary(geom = "errorbar", fun.min = mean, fun = mean, fun.max = mean, width = .75, linetype = "dashed")+
+  ggtitle("Number of Followers 1")
+
+num_fl_p2 <- popular_pl %>% filter(num_followers < 5000) %>% select(-tracks) %>% 
+  filter(if_any(everything(), ~ !is.na(.x)))%>%
+  mutate(mean_num_track = mean(num_tracks)) %>% 
+  ggplot(aes(x = "all playlists with more than 50  and less than 5000 followers", num_followers)) + 
+  geom_boxplot()+
+  ggtitle("Number of Followers 2")
+
+num_fl_p3 <- popular_pl %>% filter(num_followers < 2500) %>% select(-tracks) %>% 
+  filter(if_any(everything(), ~ !is.na(.x)))%>%
+  mutate(mean_num_track = mean(num_tracks)) %>% 
+  ggplot(aes(x = "all playlists with more than 50  and less than 2500 followers", num_followers)) + 
+  geom_boxplot()+
+  ggtitle("Number of Followers 3")
+
+num_fl_p4 <- popular_pl %>% filter(num_followers < 1250) %>% select(-tracks) %>% 
+  filter(if_any(everything(), ~ !is.na(.x)))%>%
+  mutate(mean_num_track = mean(num_tracks)) %>% 
+  ggplot(aes(x = "all playlists with more than 50  and less than 1250 followers", num_followers)) + 
+  geom_boxplot()+
+  ggtitle("Number of Followers 4")
+
+
+  plot_grid(plotlist=list(num_fl_p1, num_fl_p2, num_fl_p3, num_fl_p4),
+            ncol=2)
+```
+From the four box plots with different upper bounds on the number of followers, we can see that the approximate fourth quarter of the number of followers starts at 250 and contains data with number of followers bigger than 500. Therefore, we define popular playlists as the ones having more than 500 followers.
+```{r}
+pop_pl_500 <- popular_pl %>% filter(num_followers >= 500)
+```
+
+
+To analyze the tracks in each playlist, we try to unpack the field "tracks" in each observation. First, we plot the number of tracks in these playlists.
+```{r}
+popular_pl %>% select(-tracks) %>% 
+  filter(if_any(everything(), ~ !is.na(.x)))%>% 
+  mutate(mean_num_track = mean(num_tracks)) %>% 
+  ggplot(aes(x = "all 1303 playlists", num_tracks)) + 
+  geom_boxplot()+
+  stat_summary(geom = "errorbar", fun.min = mean, fun = mean, fun.max = mean, width = .75, linetype = "dashed")+
+  ggtitle("Number of Tracks in Playlists")
+```
+As the box plot of the number of tracks shows that the number of tracks of most playlists are between 25 and 125 and the dash line show the mean value of around 85. Therefore, if we use all 1303 playlists of having more than 50 followers, the dataset of their tracks will be of size around (85 * 1303) = 110755. We merge the tracks of all playlists into all_tracks. This will be used mainly to investigate contents of playlists, not choices of combinations.
+
+```{r}
+all_tracks <-do.call("rbind", popular_pl$tracks) 
+all_tracks <-do.call("rbind", popular_pl_125$tracks) 
+```

@@ -20,5 +20,17 @@ names(playlist_info) <- c("name", "collab", "pid", "mod_at", "n_tr", "n_ab", "n_
 plot_missing(track_merge, TRUE)
 plot_missing(playlist_info, TRUE)
 ```
+After extracting the popular playlists with more than 50 followers, we plot its missing values:
+```{r, warning=FALSE}
+# shorten names for the plot
+popular_playlists <- popular_pl %>% select(-tracks)
+names(popular_playlists) <- c("name", "collab", "pid", "mod_at", "n_tr", "n_ab", "n_fo", "n_ed", "ms", "n_art", "descrp")
+plot_missing(popular_playlists)
+plot_missing(popular_playlists, TRUE)
+```
 
+It show that about 93% of the observations does not have description. Considering the description field is not important for our exploratory analysis and assuming that the listeners might not pay attention to it when deciding whether they like listening to the playlist, we remove this field from our analysis. 
 
+```{r}
+popular_pl_clean <- popular_pl %>% select(-description)
+```
