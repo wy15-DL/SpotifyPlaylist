@@ -73,6 +73,136 @@ popular_pl_500 %>% select(-tracks) %>%
 ```
 As the box plot of the number of tracks shows that the middle 50% of the number of tracks  are between 25 and 125 and the dash line show the mean value of around 85. Therefore, if we use all 1303 playlists of having more than 50 followers, the dataset of their tracks will be of size around (88 * 284) = 24140. We merge the tracks of all playlists into all_tracks for analysis on the contents of these popular playlists. 
 
+
+Then, we create dfs for all tracks, artist, and albums
+
 ```{r, warning=FALSE}
-all_tracks <-do.call("rbind", popular_pl_500$tracks) 
+all_tracks2 <- data_frame()
+for (i in 1:nrow(popular_pl_500)){
+  temp <- popular_pl_500[i,]$tracks 
+  df_temp <- do.call("rbind", temp) %>% mutate(pid=popular_pl_500[i,"pid"])
+  all_tracks2 <- rbind(all_tracks2, df_temp)
+}
+```
+
+```{r}
+# create a df of info for distinct tracks 
+track_count <- all_tracks2 %>% 
+  group_by(track_uri) %>% 
+  summarize(count = n()) %>% 
+  arrange(desc(count))
+
+names(track_count)[names(track_count) == 'track_uri'] <- 'id'
+
+for (i in 1:nrow(track_count)){
+  track_count[i, "id"] <- str_split(track_count$id[[i]], ":")[[1]][[3]]
+}
+```
+
+```{r, warning=FALSE}
+
+artist_count <- all_tracks %>% 
+  group_by(artist_uri) %>% 
+  summarise(count = n()) %>% 
+  arrange(desc(count)) 
+
+names(artist_count)[names(artist_count) == 'artist_uri'] <- 'id'
+
+for (i in 1:nrow(artist_count)){
+  artist_count[i, "id"] <- str_split(artist_count$id[[i]], ":")[[1]][[3]]
+}
+
+```
+
+
+```{r, warning=FALSE}
+album_count <- all_tracks %>% 
+  group_by(album_uri) %>% 
+  summarise(count = n()) %>% 
+  arrange(desc(count)) 
+
+names(album_count)[names(album_count) == 'album_uri'] <- 'id'
+
+for (i in 1:nrow(album_count)){
+  album_count[i, "id"] <- str_split(album_count$id[[i]], ":")[[1]][[3]]
+}
+
+```
+
+Use spotify API to get popularity info for tracks, albums, and artists.
+
+```{r}
+# create a function for it
+content_info <- function(content, artists = FALSE, albums = FALSE, tracks = FALSE){
+  library(spotifyr)
+  library(tidyverse)
+  library(httr)
+  
+  access_token<-get_spotify_access_token()
+  HeaderValue = paste0('Bearer ', access_token)
+  URI <- paste0('https://api.spotify.com/v1/')
+  
+  n <- nrow(content)
+  res <- data_frame()
+  
+  ids <- "ids="
+  element <- ""
+  max_num <- 0
+  info_types <- c('id', 'name', 'popularity')
+  
+  # max_num : maximum number of ids in the query is 50 for artists and tracks, 
+  # and 20 for albums
+  if (artists){
+    URI <- paste0(URI, "artists?")
+    element <- "artists"
+    max_num <- 50
+  }else if (albums){
+    URI <- paste0(URI, "albums?")
+    element <- "albums"
+    max_num <- 20
+  }else{
+    URI <- paste0(URI, "tracks?")
+    element <- "tracks"
+    max_num <- 50
+  }
+
+  for (i in 1:n){
+    ids <- paste0(ids, content[i,]$id, ",")
+    
+    if (i%%max_num!=0 && i!=n){
+      next
+    }
+    Sys.sleep(0.10)
+    ids <- substr(ids, 1, nchar(ids)-1)
+    URI1 <- paste0(URI, ids)
+    response2 = GET(url = URI1, add_headers(Authorization = HeaderValue))
+
+    info <- lapply(content(response2)[[element]], function (x) x[info_types])
+    info <- do.call(rbind.data.frame, info)
+
+    res <- rbind(res, info)
+    print(nrow(res))
+    ids <- "ids="
+  }
+  
+  return(res)
+}
+
+```
+
+```{r}
+all_tracks_info <- content_info(track_count, tracks=TRUE)
+all_artists_info <- content_info(artist_count, artists=TRUE)
+all_albums_info <- content_info(album_count, albums=TRUE)
+```
+
+```{r}
+all_tracks2$track_popularity <- all_tracks_info$popularity[match(all_tracks2$track_uri, paste0("spotify:track:",all_tracks_info$id))]
+
+
+all_tracks2$artist_popularity <- all_artists_info$popularity[match(all_tracks2$artist_uri, paste0("spotify:artist:",all_artists_info$id))]
+
+all_tracks2$album_popularity <- all_albums_info$popularity[match(all_tracks2$album_uri, paste0("spotify:album:",all_albums_info$id))]
+
+all_tracks2$pl_num_followers <- pop_pl_500$num_followers[match(all_tracks2$pid, pop_pl_500$pid)]
 ```
