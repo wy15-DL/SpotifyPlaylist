@@ -303,13 +303,13 @@ plot_super_feat <- function(feat_type){
   tr_10000 %>% 
     ggplot(aes(cum_duration, .data[[feat_type]])) + 
     geom_line(aes(colour=pl_num_followers))+ 
-    geom_point() + sc + xlab("duration %") + facet_wrap(~pid) 
+    geom_point(size=1) + sc + xlab("duration %") + facet_wrap(~pid) 
  
 }
 
 ```
 
-```{r,  fig.width=7,fig.height=7}
+```{r,  fig.width=10,fig.height=10}
 plot_super_feat("danceability")
 plot_super_feat("energy")
 plot_super_feat("acousticness")

@@ -1,0 +1,40 @@
+"","pid","danceability","energy","artist_name","track_name","cum_duration","album_name","liveness","acousticness"
+"1",248269,0.853,0.56,"Bruno Mars","That's What I Like",1.95590611862599,"24K Magic",0.0944,0.013
+"2",248269,0.767,0.839,"En Vogue","My Lovin' (You're Never Gonna Get It)",4.62076941726029,"Funky Divas",0.111,0.0318
+"3",248269,0.824,0.886,"The Sugarhill Gang","Apache (Jump On It)",8.16706937428,"Rapper's Delight",0.0694,0.274
+"4",248269,0.534,0.247,"James Brown & The Famous Flames","It's A Man's, Man's, Man's World",9.75089599053109,"It's A Man's Man's Man's World",0.119,0.717
+"5",248269,0.877,0.854,"Michael Jackson","The Way You Make Me Feel - 2012 Remaster",12.5719626550276,"Bad 25th Anniversary",0.144,0.0544
+"6",248269,0.566,0.482,"Stevie Wonder","For Once In My Life",14.1863259079563,"For Once In My Life",0.269,0.301
+"7",248269,0.777,0.7,"Prince","Little Red Corvette",15.9711435880539,"4Ever",0.836,0.235
+"8",248269,0.806,0.721,"Keyshia Cole","Let It Go",18.2264544741046,"Just Like You",0.209,0.197
+"9",248269,0.753,0.545,"Salt-N-Pepa","Whatta Man",21.1444207852013,"Very Necessary",0.241,0.162
+"10",248269,0.947,0.607,"Grandmaster Flash & The Furious Five","The Message (feat. Melle Mel & Duke Bootee)",25.2304820549236,"The Message",0.0861,0.0249
+"11",248269,0.698,0.774,"Lionel Richie","Dancing On The Ceiling",27.7922664619157,"Dancing On The Ceiling",0.409,0.12
+"12",248269,0.709,0.698,"Nick Jonas","Bacon",29.5234581364192,"Last Year Was Complicated",0.272,0.0738
+"13",248269,0.808,0.888,"Lizzo","Worship",31.2063419304643,"Coconut Oil",0.0584,0.00411
+"14",248269,0.808,0.881,"Donna Summer","Hot Stuff - 12"" Version",35.0582258999507,"Bad Girls",0.0688,0.00513
+"15",248269,0.92,0.654,"Michael Jackson","Billie Jean",37.8386590602967,"Thriller 25 Super Deluxe Edition",0.0359,0.0236
+"16",248269,0.65,0.658,"Stevie Wonder","Superstition - Single Version",40.1014172141087,"Song Review: A Greatest Hits Collection",0.0526,0.0887
+"17",248269,0.724,0.538,"Mark Ronson","Daffodils",42.9226068957347,"Uptown Special",0.0343,0.0408
+"18",248269,0.879,0.626,"Kool & The Gang","Get Down On It - Single Version",44.9373057393926,"The Very Best Of Kool & The Gang",0.056,0.205
+"19",248269,0.84,0.56,"Bell Biv DeVoe","Poison",47.4151830012281,"Poison",0.633,0.00195
+"20",248269,0.818,0.803,"Bruno Mars","24K Magic",49.5536276142796,"24K Magic",0.153,0.034
+"21",248269,0.883,0.664,"James Brown","Get Up Offa That Thing",51.9212342138269,"20 All-Time Greatest Hits!",0.941,0.225
+"22",248269,0.629,0.511,"K-Ci & JoJo","All My Life",55.0557106727958,"Love Always",0.0588,0.114
+"23",248269,0.869,0.648,"Earth, Wind & Fire","Let's Groove",58.2666470091602,"Raise!",0.126,0.121
+"24",248269,0.64,0.427,"Boyz II Men","End Of The Road",61.5925191958768,"Cooleyhighharmony",0.0579,0.0664
+"25",248269,0.621,0.481,"R. Kelly","Bump n' Grind",64.0162689207442,"12 Play",0.241,0.0984
+"26",248269,0.744,0.397,"Brian McKnight","The Only One For Me",66.022772931008,"1989-2002 From There To Here",0.124,0.226
+"27",248269,0.498,0.59,"Bruno Mars","Talking To The Moon",68.0844075409879,"Doo-Wops & Hooligans",0.107,0.511
+"28",248269,0.681,0.529,"Fabolous","Into You [Main Mix feat. Tamia]",70.8649731813195,"Street Dreams",0.184,0.201
+"29",248269,0.9,0.845,"The Sugarhill Gang","Rapper's Delight",74.9090193698987,"Rhino Hi-Five: The Sugarhill Gang",0.0724,0.465
+"30",248269,0.816,0.5,"Usher","U Got It Bad",77.2542936290186,"8701",0.0733,0.0227
+"31",248269,0.811,0.458,"TLC","Creep",79.7953827696909,"Crazysexycool",0.0526,0.0193
+"32",248269,0.888,0.815,"Michael Jackson","P.Y.T. (Pretty Young Thing)",82.054478798187,"Thriller 25 Super Deluxe Edition",0.127,0.23
+"33",248269,0.485,0.441,"Justin Timberlake","Pusher Love Girl",86.6189820729976,"The 20/20 Experience",0.485,0.466
+"34",248269,0.772,0.688,"Mýa","Case Of The Ex (Whatcha Gonna Do)",88.8607894633747,"Fear Of Flying",0.0725,0.0548
+"35",248269,0.67,0.619,"Stevie Wonder","Signed, Sealed, Delivered (I'm Yours)",90.3795778695591,"Signed Sealed And Delivered",0.0492,0.0514
+"36",248269,0.838,0.794,"Rick James","Super Freak",92.323873063734,"Street Songs",0.0575,0.22
+"37",248269,0.687,0.903,"Chromeo","Night by Night",94.474714018294,"Business Casual",0.119,0.00644
+"38",248269,0.902,0.655,"Kool & The Gang","Celebration",97.302839973451,"Celebrate!",0.0672,0.139
+"39",248269,0.767,0.856,"2Pac","California Love - Original Version",100,"Greatest Hits",0.36,0.0303
