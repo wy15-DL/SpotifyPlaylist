@@ -74,7 +74,11 @@ popular_pl_500 %>% select(-tracks) %>%
 As the box plot of the number of tracks shows that the middle 50% of the number of tracks  are between 25 and 125 and the dash line show the mean value of around 85. Therefore, if we use all 1303 playlists of having more than 50 followers, the dataset of their tracks will be of size around (88 * 284) = 24140. We merge the tracks of all playlists into all_tracks for analysis on the contents of these popular playlists. 
 
 
-Then, we create dfs for all tracks, artist, and albums
+Then, we create data frames for all tracks, artists, and albums. Important variables to keep for future analysis are their uri from which we can extract their ids, pid for tracks which is the playlist they are in, and count which is their frequency in all playlists. 
+
+Finally, use spotify API to request information about the popularity of tracks, artists, and albums, and audio fetures of all tracks. 
+
+Each important dataset is saved in .RData form for future load.
 
 ```{r, warning=FALSE}
 all_tracks2 <- data_frame()
@@ -86,7 +90,6 @@ for (i in 1:nrow(popular_pl_500)){
 ```
 
 ```{r}
-# create a df of info for distinct tracks 
 track_count <- all_tracks2 %>% 
   group_by(track_uri) %>% 
   summarise(count = n()) %>% 
@@ -129,7 +132,7 @@ for (i in 1:nrow(album_count)){
 
 ```
 
-Use spotify API to get popularity info for tracks, albums, and artists.
+
 
 
 ```{r eval=FALSE}
@@ -207,12 +210,17 @@ all_tracks_info <- content_info(track_count, tracks=TRUE)
 all_artists_info <- content_info(artist_count, artists=TRUE)
 all_albums_info <- content_info(album_count, albums=TRUE)
 
-save(all_tracks_info, file = "tracks_info.RData")
-save(all_artists_info, file = "artists_info.RData")
-save(all_albums_info, file = "albums_info.RData")
+save(all_tracks_info, file = "data/tracks_info.RData")
+save(all_artists_info, file = "data/artists_info.RData")
+save(all_albums_info, file = "data/albums_info.RData")
 ```
 
 ```{r}
+load("data/tracks_info.RData")
+load("data/artists_info.RData")
+load("data/albums_info.RData")
+
+
 all_tracks2$track_popularity <- all_tracks_info$popularity[match(all_tracks2$track_uri, paste0("spotify:track:",all_tracks_info$id))]
 
 

@@ -44,37 +44,7 @@ all_tracks2 %>% group_by(artist_name) %>%
 
 
 
-The plot shows that most artists have smaller than 30 appearances on all the tracks of our popular playlists. Next, we examine if the popularity of artist affects the popularity of the playlists by computing the average popularity score of each playlist based on the popularity scores of artists in the playlist. 
-
-We caculate the average popularity score for each playlist based on popularity of its tracks.
-```{r}
-# accumulative popularity of a playlist
-
-temp_df <- all_tracks2 %>% group_by(pid) %>% 
-  mutate(pp_score = mean(track_popularity))
-
-fl_p1 <- temp_df %>% filter(pl_num_followers<2500) %>% ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3) + ggtitle("#followers = [500, 2500)") + ylab("popularity_score")
-
-fl_p2 <- temp_df %>% filter(pl_num_followers>=2500 && pl_num_followers<5000) %>%
-  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
-  ggtitle("#followers = [2500, 5000)")+ ylab("popularity_score")
-
-fl_p3 <- temp_df %>% filter(pl_num_followers>=5000 && pl_num_followers<=10000) %>%
-  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
-  ggtitle("#followers = [5000, 10000)")+ ylab("popularity_score")
-
-
-fl_p4 <- temp_df %>% filter(pl_num_followers>10000) %>%
-  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
-  ggtitle("#followers >= 10000")+ ylab("popularity_score")
-
-pp <- plot_grid(plotlist=list(fl_p1, fl_p2, fl_p3, fl_p4),
-            ncol=2)
-
-title <- ggdraw() + draw_label("Popularity of playlists categorized by playlist's #followers", fontface='bold')
-
-plot_grid(title, pp, ncol=1, rel_heights=c(0.1, 1))
-```
+The plot shows that most artists have smaller than 30 appearances on all the tracks of our popular playlists. 
 
 
 
@@ -107,8 +77,8 @@ tr_30 %>%
 
 
 ```{r}
-load("pop_tr_feats.RData")
-load("pop_tr_info.RData")
+load("data/pop_tr_feats.RData")
+load("data/pop_tr_info.RData")
 ```
 
 
@@ -119,8 +89,39 @@ all_tracks_info$count <- track_count$count[match(all_tracks_info$id,track_count$
 all_tracks_info <- all_tracks_info %>% mutate(pop_level = as.integer(popularity/10) + 1)
 all_tracks_info$pop_level <- factor(all_tracks_info$pop_level, levels = 1:10)
 ```
+Next, we examine if the popularity of artist affects the popularity of the playlists by computing the average popularity score of each playlist based on the popularity scores of artists in the playlist. 
 
-Plot popularity of tracks versus their frequency in our popular playlists to see if popularity of tracks contribute to popularity of playlists.
+Caculate and plot the average popularity score for each playlist based on popularity of its tracks.
+```{r}
+# accumulative popularity of a playlist
+
+temp_df <- all_tracks2 %>% group_by(pid) %>% 
+  mutate(pp_score = mean(track_popularity))
+
+fl_p1 <- temp_df %>% filter(pl_num_followers<2500) %>% ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3) + ggtitle("#followers = [500, 2500)") + ylab("popularity_score")
+
+fl_p2 <- temp_df %>% filter(pl_num_followers>=2500 && pl_num_followers<5000) %>%
+  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
+  ggtitle("#followers = [2500, 5000)")+ ylab("popularity_score")
+
+fl_p3 <- temp_df %>% filter(pl_num_followers>=5000 && pl_num_followers<=10000) %>%
+  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
+  ggtitle("#followers = [5000, 10000)")+ ylab("popularity_score")
+
+
+fl_p4 <- temp_df %>% filter(pl_num_followers>10000) %>%
+  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
+  ggtitle("#followers >= 10000")+ ylab("popularity_score")
+
+pp <- plot_grid(plotlist=list(fl_p1, fl_p2, fl_p3, fl_p4),
+            ncol=2)
+
+title <- ggdraw() + draw_label("Popularity of playlists categorized by playlist's #followers", fontface='bold')
+
+plot_grid(title, pp, ncol=1, rel_heights=c(0.1, 1))
+```
+
+Plot popularity level of tracks versus their frequency in popular playlists to see if popularity of tracks contribute to popularity of playlists.
 ```{r}
 #all_tracks_info %>% ggplot(aes(count)) + geom_bar(stat = "identity")
 
@@ -241,7 +242,9 @@ First, we plot the populaity of all tracks in these super popular playlists, whi
 tracks_10000 %>% ggplot(aes(track_popularity))+
     geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7)
 ```
-## Choice of Combination 
+
+##Choice of Combination 
+
 Let's see audio features of tracks for each of these super popular playlists, their correlations, and how these features vary in the order of tracks for each playlist.
 
 ```{r}

@@ -21,7 +21,7 @@
   
   
 
-<meta name="author" content="Benjamin Zimnick &amp; Yuan Wang" />
+<meta name="author" content="Yuan Wang &amp; Benjamin Zimnick" />
 
 
 <meta name="date" content="2021-12-13" />
@@ -117,12 +117,10 @@
 <h2><span class="header-section-number">5.1</span> Contents of popular playlists</h2>
 <div id="artists" class="section level3" number="5.1.1">
 <h3><span class="header-section-number">5.1.1</span> Artists</h3>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-<p>Show the distribution of the number of tracks each artist has in all tracks:</p>
 <p><img src="finalproj_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
-<p>The plot shows that most artists have smaller than 30 appearances on all the tracks of our popular playlists. Next, we examine if the popularity of artist affects the popularity of the playlists by computing the average popularity score of each playlist based on the popularity scores of artists in the playlist.</p>
-<p>We caculate the average popularity score for each playlist based on popularity of its tracks.
-<img src="finalproj_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>Show the distribution of the number of tracks each artist has in all tracks:</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>The plot shows that most artists have smaller than 30 appearances on all the tracks of our popular playlists.</p>
 </div>
 <div id="tracks" class="section level3" number="5.1.2">
 <h3><span class="header-section-number">5.1.2</span> Tracks</h3>
@@ -131,32 +129,35 @@
 </div>
 <div id="popularity" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Popularity</h2>
-<p>Plot popularity of tracks versus their frequency in our popular playlists to see if popularity of tracks contribute to popularity of playlists.
-<img src="finalproj_files/figure-html/unnamed-chunk-30-1.png" width="672" />
+<p>Next, we examine if the popularity of artist affects the popularity of the playlists by computing the average popularity score of each playlist based on the popularity scores of artists in the playlist.</p>
+<p>Caculate and plot the average popularity score for each playlist based on popularity of its tracks.
+<img src="finalproj_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p>Plot popularity level of tracks versus their frequency in popular playlists to see if popularity of tracks contribute to popularity of playlists.
+<img src="finalproj_files/figure-html/unnamed-chunk-31-1.png" width="672" />
 The range of popularity variable in the spotify’s API of get_track is from 0 to 100, measuing a track’s popularity. The plot above shows that most tracks in our popular playlists are of low popularity, scores smaller than 10. This is not expected, and we investigate the popularity score further by plotting popularity scores of top 30 frequent tracks in popular playlists, which also shows that popularity and frequency in popular playlists of tracks are not correlated. Interestingly, the most frequent track, “All of Me” released in 2013 by John Legend, has a poopularity of 0, which indicates that the popularity score might be calculated based on its current streaming statistics instead of accumulative statistics. Also, given that the highest frequency is only 18 and there are 19579 distinct tracks in 287 popular playlists, the content of these playlists have a wide range of tracks and are not concentrated in a small set of tracks.</p>
 <p>Then for each playlist, caculate and plot the average popularity score of its tracks, artists, or ablbums.</p>
 <div id="popularity-scores" class="section level3" number="5.2.1">
 <h3><span class="header-section-number">5.2.1</span> Popularity Scores</h3>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <p>From the plots above, there is not a correlation betweem the number of followers and the average popularity score of tracks, artists, or albums for popular playlists. However, our popular playlists mostly have an average popularity score of between 20 and 60 for tracks, 30 and 75 for artists, and 20 and 60 for albums.</p>
 </div>
 </div>
 <div id="audio-features" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> Audio features</h2>
 <p>The function to get audio features of tracks in spotify API return features measuring specific indicators for tracks, such as danceability measuring how suitable a track is for dancing, energy measuring the track’s intensity and activity, acousticness measuring whether the track is acoustic and liveness measuring the confidence of detecting the presence of an audience in the recording.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-33-1.png" width="672" />
+<p><img src="finalproj_files/figure-html/unnamed-chunk-34-1.png" width="672" />
 The above plots show that tracks in our popular playlists mostly have moderately high danceability and energy and low acousticness and liveness. Then we calculate the average of each audio feature among tracks for each playlist and plot them to show if they agree with the plots above.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
 <p>From the plots above, there is not a correlation betweem the number of followers and the avarage of the four audio features for popular playlists. However, our popular playlists mostly have an average of between 0.4 and 0.8 in danceabiliti, 0.5 and 0.75 in energy, 0 and 0.5 in acousticness, and 0.1 and 0.3 in liveness. Thus, we can say that popular playlists tend to have tracks that are high in danceability and energy, and low in acousticness and liveness, which agrees with the distribution of these features in tracks.</p>
 <p>Next, we investigate the super popular playlists that have number of followers biggher than 10000</p>
 <p>First, we plot the populaity of all tracks in these super popular playlists, which shows that most of the tracks have moderately high popularities (unclear meaning of zero popularity from the Spoitify API).
-<img src="finalproj_files/figure-html/unnamed-chunk-37-1.png" width="672" />
-## Choice of Combination
-Let’s see audio features of tracks for each of these super popular playlists, their correlations, and how these features vary in the order of tracks for each playlist.</p>
+<img src="finalproj_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<p>##Choice of Combination</p>
+<p>Let’s see audio features of tracks for each of these super popular playlists, their correlations, and how these features vary in the order of tracks for each playlist.</p>
 <p>The correlation plot below shows that acousticness is negatively correlated with each of the three audio features.
-<img src="finalproj_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<img src="finalproj_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
 <p>Then, we add a column to account for the percentage of duration of each track in its corresponding playlists so that the the computed percentage of all tracks in each playlist sums to 100. Based on this value, compute the accumulative percentage of duration for all tracks in each playlist. Since tracks in a playlist is in order of the streaming, the accumulative percentage of duration of a track can be seen as the time when the track is played if its corresponding playlist is being streamed and the whole duration of the playlist is 100.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-42-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-42-2.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-42-3.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-42-4.png" width="672" />
+<p><img src="finalproj_files/figure-html/unnamed-chunk-43-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-43-2.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-43-3.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-43-4.png" width="672" />
 The four plots show that the the changes of danceability, energy, acousticness, and liveness in the ordered tracks of each super popular playlist varies greatly, and many playlists have tracks in the order of changing these audio features dramatically, even shifting them song by song. Overall, the danceabiility and energy values are mostly moderately high, while the acousticness and liveness are moderately low with spikes of tracks with high values.</p>
 <p>These plots indicates that super popular playlists usually choose a combination of tracks with various audio features and present them in the way of dramatic changes, which is consistent of many audiences’ listening behavior of mixing up songs with different features to avoid boredom.</p>
 

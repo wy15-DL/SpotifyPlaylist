@@ -1,9 +1,10 @@
 --- 
 title: "Exploratory Data Analysis of Spotify Playlists"
-author: "Benjamin Zimnick & Yuan Wang"
+author: "Yuan Wang & Benjamin Zimnick"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
 # Introduction
 
+Playlist is the new way of listening to music. Before, people buy albums and listen to the records in the order created by the musician. Now, audience create and listen to playlists created by ordinary people. The goal of this project is to analyze popular playlists created by Spotify users using visualizations and try to gain insights into why these playlists attract so many followers. I explored this question from aspects including the content (tracks, artist, albums) of playlists, audio features of tracks, choice of combining tracks, etc. 

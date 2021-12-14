@@ -21,7 +21,7 @@
   
   
 
-<meta name="author" content="Benjamin Zimnick &amp; Yuan Wang" />
+<meta name="author" content="Yuan Wang &amp; Benjamin Zimnick" />
 
 
 <meta name="date" content="2021-12-13" />
@@ -113,6 +113,10 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
+<p>Datasets:
+1. Main dataset: <a href="https://www.aicrowd.com/challenges/spotify-million-playlist-datasetchallenge#dataset" class="uri">https://www.aicrowd.com/challenges/spotify-million-playlist-datasetchallenge#dataset</a>
+2. We can use the “spotifyr” package in r to query track and artist information</p>
+<p>The process of collecting data is first download the main dataset in the link. The downloaded directory consists of 1000 files each of which has information for 1000 playlists in json form. Then I wrote a program called found_popular.R (can be found in the main page) to iterate through each file and load them into a temporary dataframe to extract popular playlists with number of followers bigger than 500 to add to the pop_pl_500 dataframe that will be used to do data transformation. I included the process of why I chose the threshold of 500 to be popular playlists in chapter 3.</p>
 
 </div>
             </section>
