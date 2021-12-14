@@ -1,6 +1,6 @@
 # Results
 
-## Investigate contents of popular playlists.
+## Contents of popular playlists
 ```{r}
 library(spotifyr)
 library(httr)
@@ -113,7 +113,7 @@ load("pop_tr_info.RData")
 
 
 
-Assign new variable for popularity level for the tracks
+## Popularity
 ```{r}
 all_tracks_info$count <- track_count$count[match(all_tracks_info$id,track_count$id)]
 all_tracks_info <- all_tracks_info %>% mutate(pop_level = as.integer(popularity/10) + 1)
@@ -172,7 +172,7 @@ pp <- plot_grid(plotlist=list(fl_p1, fl_p2, fl_p3),
 
 From the plots above, there is not a correlation betweem the number of followers and the average popularity score of tracks, artists, or albums for popular playlists. However, our popular playlists mostly have an average popularity score of between 20 and 60 for tracks, 30 and 75 for artists, and 20 and 60 for albums. 
 
-### Audio features
+## Audio features
 The function to get audio features of tracks in spotify API return features measuring specific indicators for tracks, such as danceability measuring how suitable a track is for dancing, energy measuring the track's intensity and activity, acousticness measuring whether the track is acoustic and liveness measuring the confidence of detecting the presence of an audience in the recording. 
 
 ```{r}
@@ -241,7 +241,7 @@ First, we plot the populaity of all tracks in these super popular playlists, whi
 tracks_10000 %>% ggplot(aes(track_popularity))+
     geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7)
 ```
-
+## Choice of Combination 
 Let's see audio features of tracks for each of these super popular playlists, their correlations, and how these features vary in the order of tracks for each playlist.
 
 ```{r}

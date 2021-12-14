@@ -3,9 +3,10 @@ data-sources
 data-transformation
 missing-values
 results
-investigate-contents-of-popular-playlists.
+contents-of-popular-playlists
 artists
 tracks
+popularity
 popularity-scores
 audio-features
 interactive-component
