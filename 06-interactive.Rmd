@@ -5,4 +5,4 @@ X-axis represents duration percentages of songs in order.
 You can move your mouse on the line to see information of the pointed song, r change audio feature to display:
 	
 
-<iframe src="d3.html" width="800" height="600"></iframe>
+<iframe src="d3.html" width="1100" height="800"></iframe>
