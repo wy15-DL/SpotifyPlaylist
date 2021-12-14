@@ -24,7 +24,7 @@
 <meta name="author" content="Benjamin Zimnick &amp; Yuan Wang" />
 
 
-<meta name="date" content="2021-12-04" />
+<meta name="date" content="2021-12-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -83,6 +83,8 @@
 <ul>
 <li class="chapter" data-level="5.1.1" data-path="results.html"><a href="results.html#artists"><i class="fa fa-check"></i><b>5.1.1</b> Artists</a></li>
 <li class="chapter" data-level="5.1.2" data-path="results.html"><a href="results.html#tracks"><i class="fa fa-check"></i><b>5.1.2</b> Tracks</a></li>
+<li class="chapter" data-level="5.1.3" data-path="results.html"><a href="results.html#popularity-scores"><i class="fa fa-check"></i><b>5.1.3</b> Popularity Scores</a></li>
+<li class="chapter" data-level="5.1.4" data-path="results.html"><a href="results.html#audio-features"><i class="fa fa-check"></i><b>5.1.4</b> Audio features</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -110,11 +112,13 @@
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
 <p>Load the data source of playlists which has more than 1 follower and plot their number of followers to help us to set a threshold for selecting popular playlists.</p>
 <p>The box plot above shows that there are few outliers that have more than 10000 followers, which results in a big range in y-axis and it’s difficult to determine the 75-quantile. Since only a few out of 1303 observations are such outliers, we can plot the number of followers for playlists with less than 10000 followers and use its value of 75-quantile as an approximation.
-<img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+<img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="672" />
 From the four box plots with different upper bounds on the number of followers, we can see that the approximate fourth quarter of the number of followers starts at 250 and contains data with number of followers bigger than 500. Therefore, we define popular playlists as the ones having more than 500 followers.</p>
 <p>To analyze the tracks in each playlist, we try to unpack the field “tracks” in each observation. First, we plot the number of tracks in these playlists.
-<img src="finalproj_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+<img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" />
 As the box plot of the number of tracks shows that the middle 50% of the number of tracks are between 25 and 125 and the dash line show the mean value of around 85. Therefore, if we use all 1303 playlists of having more than 50 followers, the dataset of their tracks will be of size around (88 * 284) = 24140. We merge the tracks of all playlists into all_tracks for analysis on the contents of these popular playlists.</p>
+<p>Then, we create dfs for all tracks, artist, and albums</p>
+<p>Use spotify API to get popularity info for tracks, albums, and artists.</p>
 
 </div>
             </section>

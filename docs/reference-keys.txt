@@ -6,5 +6,7 @@ results
 investigate-contents-of-popular-playlists.
 artists
 tracks
+popularity-scores
+audio-features
 interactive-component
 conclusion

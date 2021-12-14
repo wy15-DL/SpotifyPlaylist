@@ -10,12 +10,12 @@ library(cowplot)
 ```
 
 ```{r}
-artists <- all_tracks %>% distinct(artist_name, artist_uri)
-tracks <- all_tracks %>% distinct(track_name, track_uri)
+artists <- all_tracks2 %>% distinct(artist_name, artist_uri)
+tracks <- all_tracks2 %>% distinct(track_name, track_uri)
 ```
 ### Artists
 ```{r}
-top_30_artists <- all_tracks %>% group_by(artist_name) %>% 
+top_30_artists <- all_tracks2 %>% group_by(artist_name) %>% 
   summarise(n = n()) %>% 
   top_n(30, n) %>%
   arrange(desc(n)) 
@@ -42,51 +42,30 @@ all_tracks2 %>% group_by(artist_name) %>%
 
 ```
 
-Spotify API
-```{r}
-library(spotifyr)
-library(tidyverse)
-id <- 'f7a15526f5e24217b7273c35276e170b'
-secret <- 'a407bf14aade4a0b8a840de0dbdb4a7c'
 
 
-Sys.setenv(SPOTIFY_CLIENT_ID = id)
-Sys.setenv(SPOTIFY_CLIENT_SECRET = secret)
-```
+The plot shows that most artists have smaller than 30 appearances on all the tracks of our popular playlists. Next, we examine if the popularity of artist affects the popularity of the playlists by computing the average popularity score of each playlist based on the popularity scores of artists in the playlist. 
 
-
-The plot shows that most artists have smaller than 30 appearances on all the tracks of our popular playlists. Next, we examine if the popularity of artist affects the popularity of the playlists by computing the accumulative popularity score of each playlist based on the popularity scores of artists in the playlist. 
-
-
-```{r}
-# accumulative popularity of a playlist
-names(all_tracks_features)[names(all_tracks_features) == 'tracks$pid[[i]]'] <- 'pid'
-all_tracks_features$artist_pop <- all_artists_info$popularity[match(all_tracks_features$id, all_tracks_info$id)]
-```
-
-We caculate the accumulative popularity score for each playlist by [sum of all not NA popularity scores / (the number of not NA popularity * 100)].
+We caculate the average popularity score for each playlist based on popularity of its tracks.
 ```{r}
 # accumulative popularity of a playlist
 
-all_tracks_features <- all_tracks_features %>% group_by(pid) %>% 
-  mutate(pp_score = sum(popularity, na.rm=TRUE)/(sum(!is.na(popularity)*100)))
+temp_df <- all_tracks2 %>% group_by(pid) %>% 
+  mutate(pp_score = mean(track_popularity))
 
-# add num of followers of playlists to all_tracks_features
-all_tracks_features$p_num_followers <- pop_pl_500$num_followers[match(all_tracks_features$pid, pop_pl_500$pid)]
+fl_p1 <- temp_df %>% filter(pl_num_followers<2500) %>% ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3) + ggtitle("#followers = [500, 2500)") + ylab("popularity_score")
 
-fl_p1 <- all_tracks_features %>% filter(p_num_followers<2500) %>% ggplot(aes(x=p_num_followers, y = pp_score)) + geom_point(alpha=0.3) + ggtitle("#followers = [500, 2500)") + ylab("popularity_score")
-
-fl_p2 <- all_tracks_features %>% filter(p_num_followers>=2500 && p_num_followers<5000) %>%
-  ggplot(aes(x=p_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
+fl_p2 <- temp_df %>% filter(pl_num_followers>=2500 && pl_num_followers<5000) %>%
+  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
   ggtitle("#followers = [2500, 5000)")+ ylab("popularity_score")
 
-fl_p3 <- all_tracks_features %>% filter(p_num_followers>=5000 && p_num_followers<=10000) %>%
-  ggplot(aes(x=p_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
+fl_p3 <- temp_df %>% filter(pl_num_followers>=5000 && pl_num_followers<=10000) %>%
+  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
   ggtitle("#followers = [5000, 10000)")+ ylab("popularity_score")
 
 
-fl_p4 <- all_tracks_features %>% filter(p_num_followers>10000) %>%
-  ggplot(aes(x=p_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
+fl_p4 <- temp_df %>% filter(pl_num_followers>10000) %>%
+  ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)+
   ggtitle("#followers >= 10000")+ ylab("popularity_score")
 
 pp <- plot_grid(plotlist=list(fl_p1, fl_p2, fl_p3, fl_p4),
@@ -127,86 +106,12 @@ tr_30 %>%
 ```
 
 
-
-```{r}
-artist_info <- function(artistID, albums=FALSE){
-  access_token<-get_spotify_access_token(client_id=id,client_secret=secret)
-  HeaderValue = paste0('Bearer ', access_token)
-  URI <- paste0('https://api.spotify.com/v1/artists/', artistID)
-  if (albums){
-    URI <- paste0(URI, '/albums')
-  }
-  response2 = GET(url = URI, add_headers(Authorization = HeaderValue))
-  return(content(response2))
-}
-
-# function to get tracks on an album
-album_info <- function(albumID){
-  access_token<-get_spotify_access_token(client_id=id,client_secret=secret)
-  HeaderValue = paste0('Bearer ', access_token)
-  URI <- paste0('https://api.spotify.com/v1/albums/', albumID, '/tracks')
-  
-  response2 <- GET(url = URI, add_headers(Authorization = HeaderValue))
-  tracks <- content(response2)
-  return(tracks)
-}
-
-access_token<-get_spotify_access_token(client_id=id,client_secret=secret)
-HeaderValue = paste0('Bearer ', access_token)
-# function to get audio feature of tracks
-tracks_feature <- function(tracks){
-  
-  j <- 0
-  n <- nrow(tracks)
-  df <- data_frame()
-  curr_pid <- tracks$pid[[1]]
-  
-  for (i in 1:n){
-    
-    if (tracks$pid[[i]]!=curr_pid){
-      Sys.sleep(0.10)
-      curr_pid <- tracks$pid[[i]]
-      print(curr_pid)
-    }
-
-    id <- str_split(tracks$track_uri[[i]], ":")[[1]][[3]]
-    tr_f <- track_audio_feature(id)
-    tr_f <- do.call(cbind.data.frame, tr_f)
-    tr_f <- cbind(tr_f, tracks$pid[[i]])
-    df <- rbind(df, tr_f)
-  }
-  
-  return(df)
-}
-
-
-#ts <- artist_info("06HL4z0CvFAxyc27GXpf02")
-#ts_albums <- artist_info("06HL4z0CvFAxyc27GXpf02", TRUE)
-
-all_tracks_features <- tracks_feature(all_tracks2)
-
-```
-
-
-```{r}
-save(all_tracks_features, file = "pop_tr_feats.RData")
-```
-
-
-
-
 ```{r}
 load("pop_tr_feats.RData")
 load("pop_tr_info.RData")
 ```
 
-```{r}
 
-
-# add count in our popular playlists to all_track_info
-
-#save(all_tracks_info, file = "pop_tr_info.RData")   track_count[which(track_count$id==x$id),"count"]
-```
 
 Assign new variable for popularity level for the tracks
 ```{r}
@@ -230,20 +135,18 @@ title <- ggdraw() + draw_label("Frequency of tracks in popular playlists categor
 plot_grid(title, p, ncol=1, rel_heights=c(0.1, 1))
 
 ```
-The popularity variable in the spotify's API of get_track is from 0 to 100, measuing a track's popularity. The plot above shows that most tracks in our popular playlists are of low popularity, scores smaller than 10. This is not expected, and we investigate the popularity score further by plotting popularity scores of top 30 frequent tracks in popular playlists, which also shows that popularity and frequency in popular playlists of tracks are not correlated. Interestingly, he most frequent track, "All of Me" released in 2013 by John Legend, has a poopularity of 0, which indicates that the popularity score might be calculated based its current streaming statistics instead of accumulative statistics. Also, given that the highest frequency is only 18 and there are 19579 distinct tracks in 287 popular playlists, the content of these playlists have a wide range of tracks and are not selected from a small set of tracks. We further investigate this by calculating accumulative popularity scores of all tracks in playlists. 
+The range of popularity variable in the spotify's API of get_track is from 0 to 100, measuing a track's popularity. The plot above shows that most tracks in our popular playlists are of low popularity, scores smaller than 10. This is not expected, and we investigate the popularity score further by plotting popularity scores of top 30 frequent tracks in popular playlists, which also shows that popularity and frequency in popular playlists of tracks are not correlated. Interestingly, the most frequent track, "All of Me" released in 2013 by John Legend, has a poopularity of 0, which indicates that the popularity score might be calculated based on its current streaming statistics instead of accumulative statistics. Also, given that the highest frequency is only 18 and there are 19579 distinct tracks in 287 popular playlists, the content of these playlists have a wide range of tracks and are not concentrated in a small set of tracks.  
 
-```{r}
-names(all_tracks_features)[names(all_tracks_features) == 'tracks$pid[[i]]'] <- 'pid'
-```
-We caculate the accumulative popularity score for each playlist by [sum of all not NA popularity scores / (the number of not NA popularity * 100)]. 
+Then for each playlist, caculate and plot the average popularity score of its tracks, artists, or ablbums. 
 
 ```{r}
 plot_pp_score <- function(popularity_type){
-  temp_df <- all_tracks2  %>% group_by(pid, pl_num_followers) %>%
-    summarize(pp_score = sum(.data[[popularity_type]],na.rm=TRUE)/(sum(!is.na(.data[[popularity_type]])*100))) 
+  temp_df <- all_tracks2  %>% ungroup %>% group_by(pid, pl_num_followers) %>%
+    summarise(pp_score = mean(.data[[popularity_type]]) )
   
   fl_p <-  temp_df  %>%
-    ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)  + ylab(paste0(popularity_type, "_score"))
+    ggplot(aes(x=pl_num_followers, y = pp_score)) + geom_point(alpha=0.3)  + 
+    ggtitle(paste0("Average " , popularity_type, " for playlists")) + ylab("popularity")
 
   return(fl_p)
   
@@ -252,7 +155,7 @@ plot_pp_score <- function(popularity_type){
 ```
 
 ### Popularity Scores
-```{r}
+```{r, warning=FALSE}
 fl_p1 <- plot_pp_score("track_popularity")
 fl_p2 <-plot_pp_score("artist_popularity")
 fl_p3 <- plot_pp_score("album_popularity")
@@ -260,17 +163,17 @@ fl_p3 <- plot_pp_score("album_popularity")
 pp <- plot_grid(plotlist=list(fl_p1, fl_p2, fl_p3),
               ncol=2)
   
-  title <- ggdraw() + draw_label("Popularity of playlists", fontface='bold')
+  title <- ggdraw() + draw_label("Popularity of playlists based their tracks, artists, or albums", fontface='bold')
   
   plot_grid(title, pp, ncol=1, rel_heights=c(0.1, 1))
 ```
 
 
 
-From the plots above, there is not a correlation betweem the number of followers and the popularity score of tracks, artists, or albums for popular playlists. However, our popular playlists mostly have an average popularity score of between 20 and 60 in tracks, 30 and 75 in artists, and 20 and 60 in albums. 
+From the plots above, there is not a correlation betweem the number of followers and the average popularity score of tracks, artists, or albums for popular playlists. However, our popular playlists mostly have an average popularity score of between 20 and 60 for tracks, 30 and 75 for artists, and 20 and 60 for albums. 
 
-### Acoustic features
-Then, we analyze the acoustic features of tracks in playlists.
+### Audio features
+The function to get audio features of tracks in spotify API return features measuring specific indicators for tracks, such as danceability measuring how suitable a track is for dancing, energy measuring the track's intensity and activity, acousticness measuring whether the track is acoustic and liveness measuring the confidence of detecting the presence of an audience in the recording. 
 
 ```{r}
 feat_p1 <- all_tracks_features %>% ggplot(aes(danceability)) + geom_histogram(binwidth = 0.1, color = "grey", fill = "lightBlue",boundary=0) 
@@ -293,15 +196,16 @@ plot_grid(title, feat_pp, ncol=1, rel_heights=c(0.1, 1))
 The above plots show that tracks in our popular playlists mostly have moderately high danceability and energy and low acousticness and liveness. Then we calculate the average of each audio feature among tracks for each playlist and plot them to show if they agree with the plots above. 
 
 ```{r}
+all_tracks_features$pid <- all_tracks2$pid[match(all_tracks_features$uri, all_tracks2$track_uri)]
+all_tracks_features$pl_num_followers <- all_tracks2$pl_num_followers[match(all_tracks_features$uri, all_tracks2$track_uri)]
+
 plot_feature <- function(feature_type){
-  temp_df <- all_tracks_features %>% group_by(pid, pl_num_followers) %>% summarize(avg_dance = sum(.data[[feature_type]],na.rm=TRUE)/(sum(!is.na(.data[[feature_type]]))))
+  temp_df <- all_tracks_features %>% group_by(pid, pl_num_followers) %>% summarise(avg_dance = mean(.data[[feature_type]]))
   
-  max_fl_multi <- as.integer((max(temp_df$pl_num_followers))/10000)
-  max_fl <- (max_fl_multi+1)*10000
-  min_fl <- min(temp_df$pl_num_followers)
+  
   fl_p <-  temp_df  %>%
     ggplot(aes(x=pl_num_followers, y = avg_dance)) + geom_point(alpha=0.3) + 
-    ylab(paste0(feature_type, "_avg")) + scale_x_discrete(limits=seq(500, max_fl, by=(max_fl-500)/6))
+    ylab(paste0(feature_type, "_avg")) #+ scale_x_discrete(limits=seq(500, 72000, by=(72000-500)/5))
   
   return(fl_p)
   
@@ -309,7 +213,7 @@ plot_feature <- function(feature_type){
 
 ```
 
-```{r}
+```{r, warning=FALSE}
 fl_p1 <- plot_feature("danceability")
 fl_p2 <- plot_feature("energy")
 fl_p3 <- plot_feature("acousticness")
@@ -332,8 +236,14 @@ Next, we investigate the super popular playlists that have number of followers b
 pop_pl_10000 <- pop_pl_500 %>% filter(num_followers >= 10000)
 tracks_10000 <- all_tracks2 %>% filter(pl_num_followers >= 10000)
 ```
+First, we plot the populaity of all tracks in these super popular playlists, which shows that most of the tracks have moderately high popularities (unclear meaning of zero popularity from the Spoitify API).
+```{r}
+tracks_10000 %>% ggplot(aes(track_popularity))+
+    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.7)
+```
 
-Let's see the danceability of tracks in order for each of these super popular playlists
+Let's see audio features of tracks for each of these super popular playlists, their correlations, and how these features vary in the order of tracks for each playlist.
+
 ```{r}
 tracks_10000$danceability <- all_tracks_features$danceability[match(tracks_10000$track_uri, all_tracks_features$uri)]
 
@@ -345,11 +255,68 @@ tracks_10000$acousticness <- all_tracks_features$acousticness[match(tracks_10000
 tracks_10000$liveness <- all_tracks_features$liveness[match(tracks_10000$track_uri, all_tracks_features$uri)]
 ```
 
-Plot them:
-```{r} 
-tr_1000 <- tracks_10000 %>% group_by(pid)%>% mutate(pl_num_tracks=n()) 
+The correlation plot below shows that acousticness is negatively correlated with each of the three audio features.
+```{r}
+library(ggcorrplot)
+library(Hmisc)
+corr_tracks_10000 <- tracks_10000 %>% ungroup() %>% select(danceability, energy, acousticness, liveness) %>% as.matrix() %>% Hmisc::rcorr() %>% map(~data.frame(.x)) %>%
+  map(~rownames_to_column(.x, var="measure1")) %>%
+  map(~pivot_longer(.x, -measure1, "measure2")) %>%
+ # merge our three list elements by binding the rows
+  bind_rows(.id = "id") %>%
+  pivot_wider(names_from = id, values_from = value) %>%
+  mutate(sig_p = ifelse(P < .05, T, F), p_if_sig = ifelse(P <.05, P, NA), r_if_sig = ifelse(r <.05, r, NA)) 
 
-tr_1000 %>% filter(pl_num_tracks<50)  %>% ggplot(aes(pos, danceability)) + geom_line() + facet_wrap(~pid) 
+corr_tracks_10000%>% 
+ ggplot(aes(measure1, measure2, fill=r, label=round(r_if_sig,2))) +
+ geom_tile() + 
+ labs(x = NULL, y = NULL, fill = "Pearson's\nCorrelation", title="Correlations in Audio Features", subtitle="Only significant Pearson's correlation coefficients shown") + 
+ scale_fill_gradient2(mid="#FBFEF9",low="#0C6291",high="#A63446", limits=c(-1,1)) +
+ geom_text() +
+ theme_classic() +
+ scale_x_discrete(expand=c(0,0)) + 
+ scale_y_discrete(expand=c(0,0)) 
+#%>% ggcorrplot::ggcorrplot()
 ```
+
+
+Then, we add a column to account for the percentage of duration of each track in its corresponding playlists so that the the computed percentage of all tracks in each playlist sums to 100. Based on this value, compute the accumulative percentage of duration for all tracks in each playlist. Since tracks in a playlist is in order of the streaming, the accumulative percentage of duration of a track can be seen as the time when the track is played if its corresponding playlist is being streamed and the whole duration of the playlist is 100. 
+
+```{r,  fig.width=11,fig.height=11}
+tracks_10000 <- tracks_10000 %>% group_by(pid) %>% mutate(dur_percent = duration_ms/sum(duration_ms)*100)
+tracks_10000 <- tracks_10000 %>% group_by(pid) %>% mutate(cum_duration = cumsum(dur_percent))
+```
+
+
+```{r} 
+plot_super_feat <- function(feat_type){
+  tr_10000 <- tracks_10000 %>% group_by(pid)%>% 
+    mutate(pl_num_tracks=n()) 
+  
+  sc <- scale_colour_gradient(limits=c(min(tr_1000$pl_num_followers), 
+                                        max(tr_1000$pl_num_followers)))
+  
+  
+  tr_10000 %>% 
+    ggplot(aes(cum_duration, .data[[feat_type]])) + 
+    geom_line(aes(colour=pl_num_followers))+ 
+    geom_point() + sc + xlab("duration %") + facet_wrap(~pid) 
+ 
+}
+
+```
+
+```{r,  fig.width=7,fig.height=7}
+plot_super_feat("danceability")
+plot_super_feat("energy")
+plot_super_feat("acousticness")
+plot_super_feat("liveness")
+
+```
+The four plots show that the the changes of danceability, energy, acousticness, and liveness in the ordered tracks of each super popular playlist varies greatly, and many playlists have tracks in the order of changing these audio features dramatically, even shifting them song by song. Overall, the danceabiility and energy values are mostly moderately high, while the acousticness and liveness are moderately low with spikes of tracks with high values. 
+
+These plots indicates that super popular playlists usually choose a combination of tracks with various audio features and present them in the way of dramatic changes, which is consistent of many audiences' listening behavior of mixing up songs with different features to avoid boredom.  
+
+
 
 

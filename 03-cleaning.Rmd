@@ -20,7 +20,7 @@ p1 <- popular_pl %>% select(-tracks) %>%
 
 ```
 The box plot above shows that there are few outliers that have more than 10000 followers, which results in a big range in y-axis and it's difficult to determine the 75-quantile. Since only a few out of 1303 observations are such outliers, we can plot the number of followers for playlists with less than 10000 followers and use its value of 75-quantile as an approximation.
-```{r, warning=FALSE}
+```{r, warning=FALSE, fig.height=7, fig.width=7}
 library(cowplot)
 num_fl_p1 <- popular_pl %>% filter(num_followers < 10000) %>% select(-tracks) %>% 
   filter(if_any(everything(), ~ !is.na(.x)))%>% 
@@ -89,7 +89,7 @@ for (i in 1:nrow(popular_pl_500)){
 # create a df of info for distinct tracks 
 track_count <- all_tracks2 %>% 
   group_by(track_uri) %>% 
-  summarize(count = n()) %>% 
+  summarise(count = n()) %>% 
   arrange(desc(count))
 
 names(track_count)[names(track_count) == 'track_uri'] <- 'id'
@@ -101,7 +101,7 @@ for (i in 1:nrow(track_count)){
 
 ```{r, warning=FALSE}
 
-artist_count <- all_tracks %>% 
+artist_count <- all_tracks2 %>% 
   group_by(artist_uri) %>% 
   summarise(count = n()) %>% 
   arrange(desc(count)) 
@@ -116,7 +116,7 @@ for (i in 1:nrow(artist_count)){
 
 
 ```{r, warning=FALSE}
-album_count <- all_tracks %>% 
+album_count <- all_tracks2 %>% 
   group_by(album_uri) %>% 
   summarise(count = n()) %>% 
   arrange(desc(count)) 
@@ -130,6 +130,18 @@ for (i in 1:nrow(album_count)){
 ```
 
 Use spotify API to get popularity info for tracks, albums, and artists.
+
+
+```{r eval=FALSE}
+library(spotifyr)
+library(tidyverse)
+id <- '#############################'
+secret <- '#############################'
+
+
+Sys.setenv(SPOTIFY_CLIENT_ID = id)
+Sys.setenv(SPOTIFY_CLIENT_SECRET = secret)
+```
 
 ```{r}
 # create a function for it
@@ -190,10 +202,14 @@ content_info <- function(content, artists = FALSE, albums = FALSE, tracks = FALS
 
 ```
 
-```{r}
+```{r eval=FALSE}
 all_tracks_info <- content_info(track_count, tracks=TRUE)
 all_artists_info <- content_info(artist_count, artists=TRUE)
 all_albums_info <- content_info(album_count, albums=TRUE)
+
+save(all_tracks_info, file = "tracks_info.RData")
+save(all_artists_info, file = "artists_info.RData")
+save(all_albums_info, file = "albums_info.RData")
 ```
 
 ```{r}
