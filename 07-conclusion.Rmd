@@ -1,5 +1,4 @@
 # Conclusion
-Discuss limitations and future directions, lessons learned.
 
 Based on our graphical analysis, we conclude that the popularity of playlists are not determined by the popularity of its tracks or albums, although the popularity of artists can be a contributor since most of the popular playlists have tracks from popular artists. Tracks in these popular playlists have a wide range and are not concentrated on a small set of hit records as hypothesized. 
 
