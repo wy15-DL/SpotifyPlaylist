@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="utf-8">
-		<title>Most popular playlist</title>
-		<script src="https://d3js.org/d3.v7.js"></script>  <!-- link to D3 library -->
+	<meta charset="utf-8">
+	<title>Most popular playlist</title>
+	<script src="https://d3js.org/d3.v7.js"></script>  <!-- link to D3 library -->
 
-		<style type="text/css">
-			h1 {color:red;}		/* CSS styling */
-			p {color:blue;}
+	<style type="text/css">
+		h1 {color:red;}		/* CSS styling */
+		p {color:blue;}
 
-			.overlay {
-				fill: none;
-				pointer-events: all;
-			}
+		.overlay {
+			fill: none;
+			pointer-events: all;
+		}
 
-			.focus circle {
-				fill: steelblue;
-			}
+		.focus circle {
+			fill: steelblue;
+		}
 
-			.focus text {
-				font-size: 14px;
-			}
+		.focus text {
+			font-size: 14px;
+		}
 
-			.tooltip-box {
-				fill: white;
-				stroke: #000;
-			}
+		.tooltip-box {
+			fill: white;
+			stroke: #000;
+		}
 
-			.tooltip-artist, .tooltip-album, .tooltip-track {
-				font-weight: bold;
-			}
-		</style>
+		.tooltip-artist, .tooltip-album, .tooltip-track {
+			font-weight: bold;
+		}
+	</style>
 
 	</head>
 	<h1>Audio features of songs in the most popular playlist</h1>
@@ -42,163 +42,163 @@
 
 
 
-		<script>
-			var margin = { top: 30, right: 120, bottom: 30, left: 50 },
-				width = 960 - margin.left - margin.right,
-				height = 500 - margin.top - margin.bottom,
-				tooltip = { width: 100, height: 100, x: 10, y: -30 };
+	<script>
+		var margin = { top: 30, right: 120, bottom: 30, left: 50 },
+			width = 960 - margin.left - margin.right,
+			height = 500 - margin.top - margin.bottom,
+			tooltip = { width: 100, height: 100, x: 10, y: -30 };
 
-			// append the svg object to the body of the page
-			var svg = d3.select("#my_dataviz")
-			  .append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
-			  .append("g")
-				.attr("transform",
-					  "translate(" + margin.left + "," + margin.top + ")");
+		// append the svg object to the body of the page
+		var svg = d3.select("#my_dataviz")
+		  .append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+			.attr("transform",
+				  "translate(" + margin.left + "," + margin.top + ")");
 
-			//Read the data
+		//Read the data
 
+		//"http://localhost:8000/Downloads/most_popular_pl.csv"
+		d3.csv("data/most_popular_pl.csv").then(
 
-			d3.csv("http://localhost:8000/Downloads/most_popular_pl.csv").then(
+		  function(data) {
+			  var allGroup = ["danceability","energy", "acousticness", "liveness"]
 
-			  function(data) {
-				  var allGroup = ["danceability","energy", "acousticness", "liveness"]
+			// add the options to the button
+			d3.select("#selectButton")
+			  .selectAll('myOptions')
+				.data(allGroup)
+			  .enter()
+				.append('option')
+			  .text(function (d) { return d; }) // text showed in the menu
+			  .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
-				// add the options to the button
-				d3.select("#selectButton")
-				  .selectAll('myOptions')
-					.data(allGroup)
-				  .enter()
-					.append('option')
-				  .text(function (d) { return d; }) // text showed in the menu
-				  .attr("value", function (d) { return d; }) // corresponding value returned by the button
+			// Add X axis --> it is a date format
+			var x = d3.scaleLinear()
+			  .domain([0,100])
+			  .range([ 0, width ]);
+			svg.append("g")
+			  .attr("transform", "translate(0," + height + ")")
+			  .call(d3.axisBottom(x));
 
-				// Add X axis --> it is a date format
-				var x = d3.scaleLinear()
-				  .domain([0,100])
-				  .range([ 0, width ]);
-				svg.append("g")
-				  .attr("transform", "translate(0," + height + ")")
-				  .call(d3.axisBottom(x));
+			// Add Y axis
+			var y = d3.scaleLinear()
+			  .domain( [0,1])
+			  .range([ height, 0 ]);
+			svg.append("g")
+			  .call(d3.axisLeft(y));
 
-				// Add Y axis
-				var y = d3.scaleLinear()
-				  .domain( [0,1])
-				  .range([ height, 0 ]);
-				svg.append("g")
-				  .call(d3.axisLeft(y));
-
-				// Initialize line with group a
-				var line = svg
-				  .append('g')
-				  .append("path")
-					.datum(data)
-					.attr("d", d3.line()
-					  .x(function(d) { return x(+d.cum_duration) })
-					  .y(function(d) { return y(+d.danceability) })
-					)
-					.attr("stroke", "black")
-					.style("stroke-width", 4)
-					.style("fill", "none")
-
-
-
-				// Initialize dots with group a
-				var dot = svg
-				  .selectAll('circle')
-				  .data(data)
-				  .enter()
-				  .append('circle')
-					.attr("cx", function(d) { return x(+d.cum_duration) })
-					.attr("cy", function(d) { return y(+d.danceability) })
-					.attr("r", 7)
-					.style("fill", "#69b3a2")
-
-
-				var focus = svg.append("g")
-						.attr("class", "focus");
-
-					focus.append("circle")
-						.attr("r", 5);
-					focus.append("rect")
-							.attr("class", "tooltip-box")
-							.attr("width", 0.01)
-							.attr("height", 0.01)
-							.attr("x", 10)
-							.attr("y", -40)
-							.attr("rx", 4)
-							.attr("ry", 4);
-
-
-					focus.append("text")
-						.attr("class", "tooltip-artist")
-						.attr("x", 18)
-						.attr("y", -2);
-
-					focus.append("text")
-						.attr("class", "tooltip-album")
-						.attr("x", 18)
-						.attr("y", 18);
-
-					focus.append("text")
-						.attr("class", "tooltip-track")
-						.attr("x", 18)
-						.attr("y", 38);
+			// Initialize line with group a
+			var line = svg
+			  .append('g')
+			  .append("path")
+				.datum(data)
+				.attr("d", d3.line()
+				  .x(function(d) { return x(+d.cum_duration) })
+				  .y(function(d) { return y(+d.danceability) })
+				)
+				.attr("stroke", "black")
+				.style("stroke-width", 4)
+				.style("fill", "none")
 
 
 
-				var bisectTime = d3.bisector(function(d) { return d.cum_duration; }).left
-
-				line.on("mousemove", e => {
-					var x0 = x.invert(d3.pointer(e)[0])
-					console.log(e, x.invert(d3.pointer(e)[0]))
-					var i = bisectTime(data, x0, 1),
-						d = data[i - 1];
-					console.log(i, d)
-					focus.attr("transform", "translate(" + x(d.cum_duration) + "," +
-							y(d[d3.select("#selectButton").property("value")]) + ")");
-					focus.select(".tooltip-artist").text(d.artist_name);
-					focus.select(".tooltip-album").text(d.album_name);
-					focus.select(".tooltip-track").text(d.track_name);
-				})
+			// Initialize dots with group a
+			var dot = svg
+			  .selectAll('circle')
+			  .data(data)
+			  .enter()
+			  .append('circle')
+				.attr("cx", function(d) { return x(+d.cum_duration) })
+				.attr("cy", function(d) { return y(+d.danceability) })
+				.attr("r", 7)
+				.style("fill", "#69b3a2")
 
 
-			// A function that update the chart
-			function update(selectedGroup) {
+			var focus = svg.append("g")
+					.attr("class", "focus");
 
-			  // Create new data with the selection?
-			  var dataFilter = data.map(function(d){return {time: d.cum_duration, value:d[selectedGroup]} })
+				focus.append("circle")
+					.attr("r", 5);
+				focus.append("rect")
+						.attr("class", "tooltip-box")
+						.attr("width", 0.01)
+						.attr("height", 0.01)
+						.attr("x", 10)
+						.attr("y", -40)
+						.attr("rx", 4)
+						.attr("ry", 4);
 
-			  // Give these new data to update line
-			  line
-				  .datum(dataFilter)
-				  .transition()
-				  .duration(1000)
-				  .attr("d", d3.line()
-					.x(function(d) { return x(+d.time) })
-					.y(function(d) { return y(+d.value) })
-				  )
-			  dot
-				.data(dataFilter)
-				.transition()
-				.duration(1000)
-				  .attr("cx", function(d) { return x(+d.time) })
-				  .attr("cy", function(d) { return y(+d.value) })
-			}
 
-			// When the button is changed, run the updateChart function
-			d3.select("#selectButton").on("change", function(d) {
-				// recover the option that has been chosen
-				var selectedOption = d3.select(this).property("value")
-				// run the updateChart function with this selected option
-				update(selectedOption)
+				focus.append("text")
+					.attr("class", "tooltip-artist")
+					.attr("x", 18)
+					.attr("y", -2);
+
+				focus.append("text")
+					.attr("class", "tooltip-album")
+					.attr("x", 18)
+					.attr("y", 18);
+
+				focus.append("text")
+					.attr("class", "tooltip-track")
+					.attr("x", 18)
+					.attr("y", 38);
+
+
+
+			var bisectTime = d3.bisector(function(d) { return d.cum_duration; }).left
+
+			line.on("mousemove", e => {
+				var x0 = x.invert(d3.pointer(e)[0])
+				console.log(e, x.invert(d3.pointer(e)[0]))
+				var i = bisectTime(data, x0, 1),
+					d = data[i - 1];
+				console.log(i, d)
+				focus.attr("transform", "translate(" + x(d.cum_duration) + "," +
+						y(d[d3.select("#selectButton").property("value")]) + ")");
+				focus.select(".tooltip-artist").text(d.artist_name);
+				focus.select(".tooltip-album").text(d.album_name);
+				focus.select(".tooltip-track").text(d.track_name);
 			})
 
+
+		// A function that update the chart
+		function update(selectedGroup) {
+
+		  // Create new data with the selection?
+		  var dataFilter = data.map(function(d){return {time: d.cum_duration, value:d[selectedGroup]} })
+
+		  // Give these new data to update line
+		  line
+			  .datum(dataFilter)
+			  .transition()
+			  .duration(1000)
+			  .attr("d", d3.line()
+				.x(function(d) { return x(+d.time) })
+				.y(function(d) { return y(+d.value) })
+			  )
+		  dot
+			.data(dataFilter)
+			.transition()
+			.duration(1000)
+			  .attr("cx", function(d) { return x(+d.time) })
+			  .attr("cy", function(d) { return y(+d.value) })
+		}
+
+		// When the button is changed, run the updateChart function
+		d3.select("#selectButton").on("change", function(d) {
+			// recover the option that has been chosen
+			var selectedOption = d3.select(this).property("value")
+			// run the updateChart function with this selected option
+			update(selectedOption)
 		})
 
+	})
 
-		</script>
+
+	</script>
 
 	</body>
 
